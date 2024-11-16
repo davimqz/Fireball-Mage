@@ -91,6 +91,7 @@ void check_bomb_collision(int player_x, int player_y);
 void player_move(int new_x, int new_y);
 void refreshScreen();
 void drawPlayerLives();
+void drawFireballs();
 
 
 int main() {
@@ -150,16 +151,26 @@ int main() {
     }
 }
 
+// Função que Atualiza a Tela
 void refreshScreen() {
-    // Em vez de limpar a tela toda vez, apenas redesenha os elementos
-    screenDrawMap();  // Desenha o mapa
-    PrintMago();      // Desenha o jogador
-    drawEnemies();    // Desenha os inimigos
+    screenDrawMap();  
+    PrintMago();      
+    drawEnemies();    
     drawPlayerLives();
-
-
-    // Atualiza a tela sem a limpeza anterior
+    drawFireballs(); // Adicione esta linha
     fflush(stdout);
+}
+
+// Função para desenhar a bola de fogo
+void drawFireballs() {
+    screenSetColor(COLOR_FIREBALL, BLACK);
+    for (int i = 0; i < MAX_FIREBALLS; i++) {
+        if (fireballs[i].active) {
+            screenGotoxy(fireballs[i].x, fireballs[i].y);
+            printf("🔥");
+        }
+    }
+    screenSetColor(WHITE, BLACK);
 }
 
 // Função para desenhar o mapa
@@ -356,18 +367,22 @@ void updateFireballs(struct timespec *lastFireballMove) {
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (fireballs[i].active) {
+            // Limpa a posição anterior
             screenGotoxy(fireballs[i].x, fireballs[i].y);
-            printf(" ");  // Limpa a posição anterior
+            printf(" ");  
 
             int newX = fireballs[i].x + fireballs[i].direction;
+            
+            // Verifica colisão com parede
             if (map[fireballs[i].y][newX] == '#') {
-                fireballs[i].active = 0;  // Colidiu com uma parede
+                fireballs[i].active = 0;
                 continue;
             }
 
+            // Verifica colisão com inimigos
             for (int j = 0; j < MAX_ENEMIES; j++) {
                 if (enemies[j].alive && enemies[j].x == newX && enemies[j].y == fireballs[i].y) {
-                    enemies[j].alive = 0;  // Inimigo eliminado
+                    enemies[j].alive = 0;
                     screenGotoxy(enemies[j].x, enemies[j].y);
                     printf(" ");
                     fireballs[i].active = 0;
@@ -375,15 +390,15 @@ void updateFireballs(struct timespec *lastFireballMove) {
                 }
             }
 
-            if (fireballs[i].active) {  // Move a bola de fogo
+            // Atualiza posição da bola de fogo
+            if (fireballs[i].active) {
                 fireballs[i].x = newX;
-                screenSetColor(COLOR_FIREBALL, BLACK);
-                screenGotoxy(fireballs[i].x, fireballs[i].y);
-                printf("🔥");
             }
         }
     }
-    fflush(stdout);
+    
+    // Força um refresh completo da tela após as atualizações
+    refreshScreen();
 }
 
 // Função para posicionar bombas aleatoriamente no mapa
@@ -413,12 +428,12 @@ void check_bomb_collision(int x, int y) {
     }
 }
 
+// Função Para desenhar a Vida atual do Jogador
 void drawPlayerLives() {
     screenSetColor(WHITE, BLACK);  // Definir a cor para o texto (branco no fundo preto)
     screenGotoxy(2, 1);  // Posiciona no canto superior esquerdo (linha 1, coluna 2)
     printf("Vidas: %d", player_lives);  // Exibe a quantidade de vidas
 }
-
 
 void player_move(int new_x, int new_y) {
     check_bomb_collision(new_x, new_y);
