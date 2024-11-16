@@ -20,12 +20,35 @@ void displayMenu() {
 
 void displayOpeningArt() {
     screenClear();
-    char *ascii_art[] = {
-    "⠀⠀                                                                 Bem Vindo ao Mage Game!",
-    "                                                           Sobreviva o Maximo de Tempo Possivel no Mapa",
-    "                                                                       WASD para mover",
-    "                                                                    F para disparar magia",
-    "                                                                 Pressione ENTER para continuar...                ",
+        char *ascii_art[] = {
+        "                                                                                ____ ",
+        "                                                                          .'* *.'",
+        "                                                                       __/_*_*(_",
+        "                                                                       / _______ \\",
+        "                                                                     _\\_)/___\\(_/_ ",
+        "                                                                    / _((\\- -/))_ \\",
+        "                                                                    \\ \\())(-)(()/ /",
+        "                                                                     ' \\(((()))/ '",
+        "                                                                    / ' \\)).))/ ' \\",
+        "                                                                   / _ \\ - | - /_  \\",
+        "                                                                  (   ( .;''';. .'  )",
+        "                                                                  _\"__ /    )\\ __\"/_",
+        "                                                                    \\/  \\   ' /  \\/",
+        "                                                                     .'  '...' ' )",
+        "                                                                      / /  |  \\ \\",
+        "                                                                     / .   .   . \\",
+        "                                                                    /   .     .   \\",
+        "                                                                   /   /   |   \\   \\",
+        "                                                                 .'   /    b    '.  '.",
+        "                                                             _.-'    /     Bb     '-. '-._ ",
+        "                                                         _.-'       |      BBb       '-.  '-. ",
+        "                                                        (________mrf\\____.dBBBb.________)____)"
+        "                                                                                             ",
+        "                                                                 Bem Vindo ao Mage Game!",
+        "                                                           Sobreviva o Maximo de Tempo Possivel no Mapa",
+        "                                                                       WASD para mover",
+        "                                                                    F para disparar magia",
+        "                                                                Pressione ENTER para continuar...                ",
     };
 
     for (int i = 0; i < sizeof(ascii_art) / sizeof(ascii_art[0]); i++) {
