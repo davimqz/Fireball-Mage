@@ -1,20 +1,55 @@
-# cli-lib
-Command Line Interface library, for developing CLI applications and games in C. It has functions to access keyboard, screen and manage timing tasks.
+# Mage-Game
 
-## Requirements
-- This library works with the follwing OS:
-   - Linux based (Ubuntu, etc)
-   - MacOS
-- It is necessary to have GCC installed.
+# 📜 Descrição:
+- <b>MageGame</b> é um jogo de plataforma desenvolvido em C utilizando a biblioteca 'cli-lib'. O objetivo do jogador é controlar um mago e sobreviver o maximo de tempo possivel no mapa
+---
 
-## Usage 
-The file `main.c` has an example of how to use the Keyboard, Screen nd Timer functions. 
+# 📝 Requisitos:
+Lista dos pré-requisitos necessários para rodar o jogo, como:
+- Biblioteca 'cli-lib'
+- Compilador C (ex.: GCC)
+- Sistema operacional compatível (Linux, MacOS, Windows(Com WSL)
+---
 
-To build this example via command line, just switch to library root directory and type the following command:
+# ⚙️ Como rodar:
+- 1º)  Clone o repositório
 ```
-$ gcc ./src/*.c -I./include -o cli-lib-example
+git clone https://github.com/davimqz/Mage-Game.git
 ```
 
-To use this library to create your own apps, simply add source and header files to your project and compile it together with your own code, 
-replacing the main.c file to your own.
+- 2º)  Entre na pasta do repositório
+```
+cd mage_game/
+```
 
+- 3º)  Compile os arquivos
+```
+make all
+```
+
+- 4º)  Rode o executável do jogo
+```
+make run
+```
+---
+
+# 🕹️ Como jogar:
+- Mover o Mago: W S A D
+- Disparar Magia: F
+- Objetivo do jogo: "Sobreviver o maximo de Tempo possivel no mapa"
+- Avançar de nível: "Alcance a quantidade de pontos necessária para passar de fase."
+---
+
+# 📂 Estrutura do Projeto:
+- /src       # Código-fonte do jogo
+- /include   # Arquivos de cabeçalho
+---
+
+# ©️ Licença:
+- Este projeto é licenciado sob a [MIT License](https://opensource.org/licenses/MIT).
+---
+
+# 👥 Equipe:
+- Caio Ferreira (cflo@cesar.school)
+- Davi Marques (dmo3@cesar.school)
+- Henrique Brito (hscb@cesar.school)
