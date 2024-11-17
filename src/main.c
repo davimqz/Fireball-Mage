@@ -91,6 +91,30 @@ void drawPlayerLives();
 void drawFireballs();
 void initEnemies(); // Função para inicializar inimigos
 
+// Função para criar uma bola de fogo em uma direção específica
+void createFireballInDirection(int direction) {
+    for (int i = 0; i < MAX_FIREBALLS; i++) {
+        if (!fireballs[i].active) {
+            fireballs[i].x = playerX;
+            fireballs[i].y = playerY;
+            fireballs[i].active = 1;
+            fireballs[i].createdAt = time(NULL);
+            fireballs[i].direction = direction;
+            break;
+        }
+    }
+}
+
+// Função para lidar com a entrada do jogador para atirar a bola de fogo
+void handleFireballInput(char key) {
+    switch (key) {
+        case 'i': createFireballInDirection(0); break;  // Atira para cima
+        case 'k': createFireballInDirection(1); break;  // Atira para baixo
+        case 'j': createFireballInDirection(-1); break; // Atira para a esquerda
+        case 'l': createFireballInDirection(1); break;  // Atira para a direita
+    }
+}
+
 int main() {
     displayOpeningArt();
     keyboardInit();
@@ -108,45 +132,46 @@ int main() {
     clock_gettime(CLOCK_MONOTONIC, &lastScreenUpdate);
 
     while (1) {
-        // Verifica se há uma tecla pressionada
-        if (keyhit()) {
-            char key = readch();
-            switch (key) {
-                case 'w': movePlayer(0, -1); break;
-                case 's': movePlayer(0, 1); break;
-                case 'a': movePlayer(-1, 0); break;
-                case 'd': movePlayer(1, 0); break;
-                case 'f': createFireball(); break;
-                case ' ': playerAttack(); break;
-                case 'q':
-                    keyboardDestroy();
-                    screenDestroy();
-                    return 0;
-            }
+    // Verifica se há uma tecla pressionada
+    if (keyhit()) {
+        char key = readch();
+        switch (key) {
+            case 'w': movePlayer(0, -1); break;
+            case 's': movePlayer(0, 1); break;
+            case 'a': movePlayer(-1, 0); break;
+            case 'd': movePlayer(1, 0); break;
+            case 'j': handleFireballInput(key); break;
+            case 'l': handleFireballInput(key); break;
+            case ' ': playerAttack(); break;
+            case 'q':
+                keyboardDestroy();
+                screenDestroy();
+                return 0;
         }
-
-        updateFireballs(&lastFireballMove);
-
-        // Verifica se o intervalo para mover inimigos foi atingido
-        clock_gettime(CLOCK_MONOTONIC, &currentTime);
-        long elapsed_ms = (currentTime.tv_sec - lastEnemyMove.tv_sec) * 1000 +
-                          (currentTime.tv_nsec - lastEnemyMove.tv_nsec) / 1000000;
-        if (elapsed_ms >= ENEMY_MOVE_INTERVAL) {
-            moveEnemies(); // Move inimigos
-            lastEnemyMove = currentTime;
-        }
-
-        // Verifica se a tela precisa ser atualizada
-        elapsed_ms = (currentTime.tv_sec - lastScreenUpdate.tv_sec) * 1000 +
-                     (currentTime.tv_nsec - lastScreenUpdate.tv_nsec) / 1000000;
-
-        if (elapsed_ms >= 100) {  // Atualiza a tela a cada 100ms
-            refreshScreen();
-            lastScreenUpdate = currentTime;
-        }
-
-        usleep(1000);  // Delay de 1ms para evitar loop excessivo
     }
+
+    updateFireballs(&lastFireballMove);
+
+    // Verifica se o intervalo para mover inimigos foi atingido
+    clock_gettime(CLOCK_MONOTONIC, &currentTime);
+    long elapsed_ms = (currentTime.tv_sec - lastEnemyMove.tv_sec) * 1000 +
+                      (currentTime.tv_nsec - lastEnemyMove.tv_nsec) / 1000000;
+    if (elapsed_ms >= ENEMY_MOVE_INTERVAL) {
+        moveEnemies(); // Move inimigos
+        lastEnemyMove = currentTime;
+    }
+
+    // Verifica se a tela precisa ser atualizada
+    elapsed_ms = (currentTime.tv_sec - lastScreenUpdate.tv_sec) * 1000 +
+                 (currentTime.tv_nsec - lastScreenUpdate.tv_nsec) / 1000000;
+
+    if (elapsed_ms >= 100) {  // Atualiza a tela a cada 100ms
+        refreshScreen();
+        lastScreenUpdate = currentTime;
+    }
+
+    usleep(1000);  // Delay de 1ms para evitar loop excessivo
+}
 }
 
 // Função que Atualiza a Tela
