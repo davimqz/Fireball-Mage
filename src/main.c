@@ -138,8 +138,12 @@ int main() {
                 case 's': movePlayer(0, 1); break;
                 case 'a': movePlayer(-1, 0); break;
                 case 'd': movePlayer(1, 0); break;
-                case 'j': handleFireballInput(key); break;
-                case 'l': handleFireballInput(key); break;
+                case 'i': // Fireball up
+                case 'k': // Fireball down
+                case 'j': // Fireball left
+                case 'l': // Fireball right
+                    handleFireballInput(key); 
+                    break;
                 case ' ': playerAttack(); break;
                 case 'q':
                     keyboardDestroy();
@@ -184,11 +188,10 @@ int main() {
 // Função para criar uma bola de fogo em uma direção específica
 void createFireballInDirection(int direction) {
     for (int i = 0; i < MAX_FIREBALLS; i++) {
-        if (!fireballs[i].active) {
+        if (!fireballs[i].active) {  // Find an inactive fireball
             fireballs[i].x = playerX;
             fireballs[i].y = playerY;
             fireballs[i].active = 1;
-            fireballs[i].createdAt = time(NULL);
             fireballs[i].direction = direction;
             break;
         }
@@ -201,7 +204,7 @@ void handleFireballInput(char key) {
         case 'i': createFireballInDirection(0); break;  // Atira para cima
         case 'k': createFireballInDirection(1); break;  // Atira para baixo
         case 'j': createFireballInDirection(-1); break; // Atira para a esquerda
-        case 'l': createFireballInDirection(1); break;  // Atira para a direita
+        case 'l': createFireballInDirection(2); break;  // Atira para a direita
     }
 }
 
@@ -516,56 +519,67 @@ void updateFireballs(struct timespec *lastFireballMove) {
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (fireballs[i].active) {
+            // Clear previous position
             screenGotoxy(fireballs[i].x, fireballs[i].y);
             printf(" ");
 
-            int newX = fireballs[i].x + fireballs[i].direction;
-            
-            // Check wall collision
-            if (map[fireballs[i].y][newX] == '#') {
+            int newX = fireballs[i].x;
+            int newY = fireballs[i].y;
+
+            // Update fireball position based on its direction
+            switch (fireballs[i].direction) {
+                case 0: newY -= 1; break; // Move up
+                case 1: newY += 1; break; // Move down
+                case -1: newX -= 1; break; // Move left
+                case 2: newX += 1; break; // Move right
+            }
+
+            // Check for wall collisions
+            if (newY < 0 || newY >= MAP_HEIGHT || newX < 0 || newX >= MAP_WIDTH || map[newY][newX] == '#') {
                 fireballs[i].active = 0;
                 continue;
             }
 
-            // Check regular enemy collision
+            // Check for enemy collisions
             for (int j = 0; j < MAX_ENEMIES; j++) {
-                if (enemies[j].alive && enemies[j].x == newX && enemies[j].y == fireballs[i].y) {
+                if (enemies[j].alive && enemies[j].x == newX && enemies[j].y == newY) {
                     enemies[j].alive = 0;
                     enemies_defeated++;
-                    checkBossSpawn();
+                    fireballs[i].active = 0;
+                    checkBossSpawn(); // Check if the boss should spawn
                     screenGotoxy(enemies[j].x, enemies[j].y);
                     printf(" ");
-                    fireballs[i].active = 0;
                     break;
                 }
             }
 
-            // Check boss collision
+            // Check for boss collisions
             for (int j = 0; j < MAX_BOSS; j++) {
-                if (boss[j].alive && boss[j].x == newX && boss[j].y == fireballs[i].y) {
+                if (boss[j].alive && boss[j].x == newX && boss[j].y == newY) {
                     boss[j].health--;
                     fireballs[i].active = 0;
-                    
                     if (boss[j].health <= 0) {
                         boss[j].alive = 0;
+                        boss_spawned = 0;
                         screenGotoxy(boss[j].x, boss[j].y);
                         printf(" ");
-                        // Display victory message
-                        screenGotoxy(MAP_WIDTH/2 - 10, MAP_HEIGHT/2);
+                        // Victory message
+                        screenGotoxy(MAP_WIDTH / 2 - 10, MAP_HEIGHT / 2);
                         printf("🎉 BOSS DEFEATED! 🎉");
                     }
                     break;
                 }
             }
 
-            // Update fireball position
+            // Update fireball position if still active
             if (fireballs[i].active) {
                 fireballs[i].x = newX;
+                fireballs[i].y = newY;
             }
         }
     }
-    
-    refreshScreen();
+
+    refreshScreen(); // Refresh the screen after updating fireballs
 }
 
 // Função para posicionar bombas aleatoriamente no mapa
