@@ -15,7 +15,7 @@ Lista dos pré-requisitos necessários para rodar o jogo, como:
 # ⚙️ Como rodar:
 - 1º)  Clone o repositório
 ```
-git clone https://github.com/davimqz/Mage-Game.git
+git clone https://github.com/davimqz/Mage_Game.git
 ```
 
 - 2º)  Entre na pasta do repositório
