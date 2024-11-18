@@ -36,7 +36,7 @@ make run
 
 # 🕹️ Como jogar:
 - Mover o Mago: W S A D
-- Disparar Magia: F
+- Disparar Magia: L(Direita) J (ESQUERDA) K(BAIXO) I(CIMA)
 - Objetivo do jogo: "Derrotar os Inimigos e Matar o BOSS"
 ---
 
