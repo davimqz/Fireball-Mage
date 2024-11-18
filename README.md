@@ -1,8 +1,8 @@
-# Mage-Game
+# Fireball-Mage
 ![bannermagegame](https://github.com/davimqz/Mage_Game/blob/main/midia/mage.png)
 
 # 📜 Descrição:
-- <b>MageGame</b> é um jogo de plataforma desenvolvido em C utilizando a biblioteca 'cli-lib'. O objetivo do jogador é controlar um mago e sobreviver o maximo de tempo possivel no mapa
+- <b>Fireball-Mage</b> é um jogo de plataforma desenvolvido em C utilizando a biblioteca 'cli-lib'. O objetivo do jogador é controlar um mago e sobreviver o maximo de tempo possivel no mapa
 ---
 
 # 📝 Requisitos:
@@ -15,12 +15,12 @@ Lista dos pré-requisitos necessários para rodar o jogo, como:
 # ⚙️ Como rodar:
 - 1º)  Clone o repositório
 ```
-git clone https://github.com/davimqz/Mage_Game.git
+git clone https://github.com/davimqz/Fireball-Mage.git
 ```
 
 - 2º)  Entre na pasta do repositório
 ```
-cd mage_game/
+cd Fireball-Mage/
 ```
 
 - 3º)  Compile os arquivos
@@ -37,8 +37,7 @@ make run
 # 🕹️ Como jogar:
 - Mover o Mago: W S A D
 - Disparar Magia: F
-- Objetivo do jogo: "Sobreviver o maximo de Tempo possivel no mapa"
-- Avançar de nível: "Alcance a quantidade de pontos necessária para passar de fase."
+- Objetivo do jogo: "Derrotar os Inimigos e Matar o BOSS"
 ---
 
 # 📂 Estrutura do Projeto:
