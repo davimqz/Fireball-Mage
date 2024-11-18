@@ -1,5 +1,6 @@
 # Mage-Game
-![bannermagegame](https://github.com/davimqz/Mage_Game/blob/main/midia/mage_banner.png)
+![bannermagegame](https://github.com/davimqz/Mage_Game/blob/main/midia/mage.png)
+
 
 # 📜 Descrição:
 - <b>MageGame</b> é um jogo de plataforma desenvolvido em C utilizando a biblioteca 'cli-lib'. O objetivo do jogador é controlar um mago e sobreviver o maximo de tempo possivel no mapa
