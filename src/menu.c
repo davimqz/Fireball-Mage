@@ -45,9 +45,9 @@ void displayOpeningArt() {
         "                                                        (________mrf\\____.dBBBb.________)____)"
         "                                                                                             ",
         "                                                                 Bem Vindo ao Mage Game!",
-        "                                                           Sobreviva o Maximo de Tempo Possivel no Mapa",
-        "                                                                       WASD para mover",
-        "                                                                    F para disparar magia",
+        "                                                       Sobreviva o Maximo de Tempo Possivel no Mapa",
+        "                                                                    W A S D para mover",
+        "                                                                 I J K L  para disparar magia",
         "                                                                Pressione ENTER para continuar...                ",
     };
 
