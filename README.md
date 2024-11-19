@@ -43,6 +43,8 @@ make run
 # 📂 Estrutura do Projeto:
 - /src       # Código-fonte do jogo
 - /include   # Arquivos de cabeçalho
+- /midia     # Pasta com o Banner
+- /files     # Pasta com os arquivos.txt
 ---
 
 # ©️ Licença:
