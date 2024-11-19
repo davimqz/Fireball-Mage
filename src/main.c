@@ -627,14 +627,8 @@ void check_bomb_collision(int x, int y) {
     // Verifica em todas as direções próximas ao jogador
     int bomb_coords[9][2] = {
         {x, y},     // Posição atual
-        {x-1, y},   // Esquerda
-        {x+1, y},   // Direita
-        {x, y-1},   // Cima
-        {x, y+1},   // Baixo
-        {x-1, y-1}, // Superior esquerdo
-        {x+1, y-1}, // Superior direito
-        {x-1, y+1}, // Inferior esquerdo
-        {x+1, y+1}  // Inferior direito
+        {x +1, y},   // Esquerda
+          // Cima
     };
 
     for (int i = 0; i < 9; i++) {
