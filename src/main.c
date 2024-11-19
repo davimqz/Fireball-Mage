@@ -347,7 +347,8 @@ void checkBossSpawn() {
                 printf("⚠️ O BOSS FINAL APARECEU! PREPARE-SE PARA A BATALHA! ⚠️");
                 sleep(2); // Pausa dramática
                 break;
-            }
+            } 
+
         }
        
     }
@@ -591,7 +592,9 @@ void updateFireballs(struct timespec *lastFireballMove) {
                         printf(" ");
                         // Victory message
                         screenGotoxy(MAP_WIDTH / 2 - 10, MAP_HEIGHT / 2);
-                        printf("🎉 BOSS DEFEATED! 🎉");
+                        screenClear();
+                        print_ascii("files/win.txt");
+                        exit(1);
                     }
                     break;
                 }
