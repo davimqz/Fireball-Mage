@@ -24,7 +24,7 @@
 #define COLOR_BOMB YELLOW
 #define COLOR_FIREBALL RED
 #define ENEMY_MOVE_INTERVAL 1000
-#define FIREBALL_MOVE_INTERVAL 100  
+#define FIREBALL_MOVE_INTERVAL 50  
 
 int player_lives = 3;  // Número de vidas do jogador
 int enemies_defeated = 0;  // Track number of defeated enemies
@@ -111,6 +111,7 @@ void drawBoss();
 void checkBossSpawn();
 void check_boss_collision(int x, int y);
 void moveBoss();
+void print_ascii(char *path);
 
 // Função Main
 int main() {
@@ -185,6 +186,27 @@ int main() {
     }
 }
 
+void print_ascii(char *path)
+{
+    FILE *file;
+    char string[128];
+
+    file = fopen(path, "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening file");
+        return;
+    }
+
+    while (fgets(string, sizeof(string), file) != NULL)
+    {
+        printf("%s", string);
+    }
+
+    fclose(file);
+}
+
 // Função para criar uma bola de fogo em uma direção específica
 void createFireballInDirection(int direction) {
     for (int i = 0; i < MAX_FIREBALLS; i++) {
@@ -249,7 +271,7 @@ void screenDrawMap() {
                 case 'B':  // Desenhar bombas
                     screenSetColor(COLOR_BOMB, BLACK);
                     screenGotoxy(x, y);
-                    printf("💣");  // Exibir emoji da bomba
+                    printf("B");  // Exibir emoji da bomba
                     screenSetColor(WHITE, BLACK);
                     continue;  // Evita sobrescrever abaixo
                 default:
@@ -327,6 +349,7 @@ void checkBossSpawn() {
                 break;
             }
         }
+       
     }
 }
 
@@ -343,6 +366,9 @@ void movePlayer(int dx, int dy) {
         check_enemy_collision(playerX, playerY); // Verifica colisão com inimigos
         map[playerY][playerX] = '@';  // Atualiza o mapa com a nova posição
         refreshScreen();  // Redesenha tudo
+
+        check_bomb_collision(playerX, playerY);
+
     }
 }
 
@@ -598,13 +624,43 @@ void placeBombs(int num_bombs) {
 
 // Função para verificar colisão com bombas
 void check_bomb_collision(int x, int y) {
-    if (map[y][x] == 'B') {
-        player_lives--;
-        printf("Você pisou em uma bomba! Vidas restantes: %d\n", player_lives);
-        map[y][x] = ' ';  // Remove a bomba do mapa
-        if (player_lives <= 0) {
-            printf("Game Over!\n");
-            exit(0);  // Termina o jogo
+    // Verifica em todas as direções próximas ao jogador
+    int bomb_coords[9][2] = {
+        {x, y},     // Posição atual
+        {x-1, y},   // Esquerda
+        {x+1, y},   // Direita
+        {x, y-1},   // Cima
+        {x, y+1},   // Baixo
+        {x-1, y-1}, // Superior esquerdo
+        {x+1, y-1}, // Superior direito
+        {x-1, y+1}, // Inferior esquerdo
+        {x+1, y+1}  // Inferior direito
+    };
+
+    for (int i = 0; i < 9; i++) {
+        int check_x = bomb_coords[i][0];
+        int check_y = bomb_coords[i][1];
+
+        // Verifica limites do mapa para evitar segmentation fault
+        if (check_x >= 0 && check_x < MAP_WIDTH && 
+            check_y >= 0 && check_y < MAP_HEIGHT) {
+            
+            if (map[check_y][check_x] == 'B') {
+                player_lives--;
+                printf("Você pisou em uma bomba! Vidas restantes: %d\n", player_lives);
+
+                // Remove a bomba do mapa
+                map[check_y][check_x] = ' ';
+
+                // Verifica se o jogador ainda está vivo
+                if (player_lives <= 0) {
+                    print_ascii("files/death.txt");
+                    exit(0);  // Termina o jogo
+                }
+
+                // Sai do loop após encontrar a primeira bomba
+                break;
+            }
         }
     }
 }
@@ -616,7 +672,7 @@ void check_enemy_collision(int x, int y) {
             player_lives--;
             printf("Você foi atingido por um inimigo! Vidas restantes: %d\n", player_lives);
             if (player_lives <= 0) {
-                printf("Game Over!\n");
+                print_ascii("files/death.txt");
                 exit(0);  // Termina o jogo
             }
         }
@@ -630,7 +686,7 @@ void check_boss_collision(int x, int y) {
             player_lives--;
             printf("Você foi atingido por um inimigo! Vidas restantes: %d\n", player_lives);
             if (player_lives <= 0) {
-                printf("Game Over!\n");
+                print_ascii("files/death.txt");
                 exit(0);  // Termina o jogo
             }
         }
