@@ -23,7 +23,7 @@
 #define COLOR_ATTACK CYAN
 #define COLOR_BOMB YELLOW
 #define COLOR_FIREBALL RED
-#define ENEMY_MOVE_INTERVAL 1000
+#define ENEMY_MOVE_INTERVAL 600
 #define FIREBALL_MOVE_INTERVAL 50  
 
 int player_lives = 3;  // Número de vidas do jogador
