@@ -627,14 +627,8 @@ void check_bomb_collision(int x, int y) {
     // Verifica em todas as direções próximas ao jogador
     int bomb_coords[9][2] = {
         {x, y},     // Posição atual
-        {x-1, y},   // Esquerda
-        {x+1, y},   // Direita
-        {x, y-1},   // Cima
-        {x, y+1},   // Baixo
-        {x-1, y-1}, // Superior esquerdo
-        {x+1, y-1}, // Superior direito
-        {x-1, y+1}, // Inferior esquerdo
-        {x+1, y+1}  // Inferior direito
+        {x +1, y},   // Esquerda
+          // Cima
     };
 
     for (int i = 0; i < 9; i++) {
@@ -654,7 +648,8 @@ void check_bomb_collision(int x, int y) {
 
                 // Verifica se o jogador ainda está vivo
                 if (player_lives <= 0) {
-                    print_ascii("files/death.txt");
+                    screenClear();
+                    print_ascii("files/death_bomba.txt");
                     exit(0);  // Termina o jogo
                 }
 
@@ -672,7 +667,9 @@ void check_enemy_collision(int x, int y) {
             player_lives--;
             printf("Você foi atingido por um inimigo! Vidas restantes: %d\n", player_lives);
             if (player_lives <= 0) {
-                print_ascii("files/death.txt");
+                screenClear();
+                print_ascii("files/death_inimigo.txt");
+                printf("/n");
                 exit(0);  // Termina o jogo
             }
         }
@@ -686,7 +683,8 @@ void check_boss_collision(int x, int y) {
             player_lives--;
             printf("Você foi atingido por um inimigo! Vidas restantes: %d\n", player_lives);
             if (player_lives <= 0) {
-                print_ascii("files/death.txt");
+                screenClear();
+                print_ascii("files/death_boss.txt");
                 exit(0);  // Termina o jogo
             }
         }
