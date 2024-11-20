@@ -6,15 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAP_WIDTH 60   // Novo tamanho da largura do mapa
-#define MAP_HEIGHT 30  // Novo tamanho da altura do mapa
-#define MAX_ENEMIES 10 // Número de inimigos
-#define MAX_BOSS 1 // Número de inimigos
-#define MAX_FIREBALLS 5 // Número Maximo de Bolas de Fogo
+#define MAP_WIDTH 60
+#define MAP_HEIGHT 30
+#define MAX_ENEMIES 10
+#define MAX_BOSS 1
+#define MAX_FIREBALLS 5
 #define BOSS_MOVE_INTERVAL 200
 
-
-// Cores para os elementos do mapa
 #define COLOR_WALL RED
 #define COLOR_DOOR YELLOW
 #define COLOR_FLOOR LIGHTGRAY
@@ -26,12 +24,11 @@
 #define ENEMY_MOVE_INTERVAL 600
 #define FIREBALL_MOVE_INTERVAL 50  
 
-int player_lives = 3;  // Número de vidas do jogador
-int enemies_defeated = 0;  // Track number of defeated enemies
-int boss_health = 10;     // Boss health points
-int boss_spawned = 0; 
+int player_lives = 3;
+int enemies_defeated = 0;
+int boss_health = 10;
+int boss_spawned = 0;
 
-// Definição do mapa ampliado
 char map[MAP_HEIGHT][MAP_WIDTH] = {
     "############################################################",
     "#                                                          #",
@@ -55,25 +52,20 @@ char map[MAP_HEIGHT][MAP_WIDTH] = {
     "############################################################"
 };
 
-// Posição inicial do jogador
 int playerX = 30;
 int playerY = 10;
 
-// Estrutura para os inimigos
 typedef struct {
     int x, y;
     int alive;
 } Enemy;
 
-// Estrutura para os inimigos
 typedef struct {
     int x, y;
     int alive;
     int health;
 } Boss;
 
-
-// Estrutura para as bolas de fogo
 typedef struct {
     int x, y;
     int active;
@@ -81,17 +73,16 @@ typedef struct {
     int direction;
 } Fireball;
 
-// Array de inimigos
 Enemy enemies[MAX_ENEMIES];
 Boss boss[MAX_BOSS];
 Fireball fireballs[MAX_FIREBALLS];
 
 void screenDrawMap();
 void PrintMago();
-void drawEnemies(); // Função para desenhar inimigos
+void drawEnemies();
 void movePlayer(int dx, int dy);
-int  isOccupiedByEnemy(int x, int y); // Função para verificar se uma posição está ocupada por um inimigo
-void moveEnemies(); // Função para mover inimigos
+int isOccupiedByEnemy(int x, int y);
+void moveEnemies();
 void showAttackFeedback();
 void playerAttack();
 void createFireball();
@@ -99,12 +90,12 @@ void initFireballs();
 void updateFireballs(struct timespec *lastFireballMove);
 void placeBombs(int num_bombs);
 void check_bomb_collision(int player_x, int player_y);
-void check_enemy_collision(int player_x, int player_y); // Função para verificar colisão com inimigos
+void check_enemy_collision(int player_x, int player_y);
 void player_move(int new_x, int new_y);
 void refreshScreen();
 void drawPlayerLives();
 void drawFireballs();
-void initEnemies(); // Função para inicializar inimigos
+void initEnemies();
 void createFireballInDirection(int direction);
 void handleFireballInput(char key);
 void drawBoss();
@@ -113,7 +104,6 @@ void check_boss_collision(int x, int y);
 void moveBoss();
 void print_ascii(char *path);
 
-// Função Main
 int main() {
     displayOpeningArt();
     keyboardInit();
@@ -139,10 +129,10 @@ int main() {
                 case 's': movePlayer(0, 1); break;
                 case 'a': movePlayer(-1, 0); break;
                 case 'd': movePlayer(1, 0); break;
-                case 'i': // Fireball up
-                case 'k': // Fireball down
-                case 'j': // Fireball left
-                case 'l': // Fireball right
+                case 'i':
+                case 'k':
+                case 'j':
+                case 'l':
                     handleFireballInput(key); 
                     break;
                 case ' ': playerAttack(); break;
@@ -155,10 +145,8 @@ int main() {
 
         updateFireballs(&lastFireballMove);
 
-        // Obtém o tempo atual
         clock_gettime(CLOCK_MONOTONIC, &currentTime);
 
-        // Verifica movimentação dos inimigos
         long elapsed_ms_enemy = (currentTime.tv_sec - lastEnemyMove.tv_sec) * 1000 +
                                (currentTime.tv_nsec - lastEnemyMove.tv_nsec) / 1000000;
         if (elapsed_ms_enemy >= ENEMY_MOVE_INTERVAL) {
@@ -166,7 +154,6 @@ int main() {
             lastEnemyMove = currentTime;
         }
 
-        // Verifica movimentação do boss
         long elapsed_ms_boss = (currentTime.tv_sec - lastBossMove.tv_sec) * 1000 +
                               (currentTime.tv_nsec - lastBossMove.tv_nsec) / 1000000;
         if (elapsed_ms_boss >= BOSS_MOVE_INTERVAL && boss_spawned) {
@@ -174,7 +161,6 @@ int main() {
             lastBossMove = currentTime;
         }
 
-        // Atualiza a tela
         long elapsed_ms_screen = (currentTime.tv_sec - lastScreenUpdate.tv_sec) * 1000 +
                                 (currentTime.tv_nsec - lastScreenUpdate.tv_nsec) / 1000000;
 
@@ -186,31 +172,27 @@ int main() {
     }
 }
 
-void print_ascii(char *path)
-{
+void print_ascii(char *path) {
     FILE *file;
     char string[128];
 
     file = fopen(path, "r");
 
-    if (file == NULL)
-    {
+    if (file == NULL) {
         printf("Error opening file");
         return;
     }
 
-    while (fgets(string, sizeof(string), file) != NULL)
-    {
+    while (fgets(string, sizeof(string), file) != NULL) {
         printf("%s", string);
     }
 
     fclose(file);
 }
 
-// Função para criar uma bola de fogo em uma direção específica
 void createFireballInDirection(int direction) {
     for (int i = 0; i < MAX_FIREBALLS; i++) {
-        if (!fireballs[i].active) {  // Find an inactive fireball
+        if (!fireballs[i].active) {
             fireballs[i].x = playerX;
             fireballs[i].y = playerY;
             fireballs[i].active = 1;
@@ -220,17 +202,15 @@ void createFireballInDirection(int direction) {
     }
 }
 
-// Função para lidar com a entrada do jogador para atirar a bola de fogo
 void handleFireballInput(char key) {
     switch (key) {
-        case 'i': createFireballInDirection(0); break;  // Atira para cima
-        case 'k': createFireballInDirection(1); break;  // Atira para baixo
-        case 'j': createFireballInDirection(-1); break; // Atira para a esquerda
-        case 'l': createFireballInDirection(2); break;  // Atira para a direita
+        case 'i': createFireballInDirection(0); break;
+        case 'k': createFireballInDirection(1); break;
+        case 'j': createFireballInDirection(-1); break;
+        case 'l': createFireballInDirection(2); break;
     }
 }
 
-// Função que Atualiza a Tela
 void refreshScreen() {
     screenDrawMap();
     PrintMago();
@@ -243,7 +223,6 @@ void refreshScreen() {
     fflush(stdout);
 }
 
-// Função para desenhar a bola de fogo
 void drawFireballs() {
     screenSetColor(COLOR_FIREBALL, BLACK);
     for (int i = 0; i < MAX_FIREBALLS; i++) {
@@ -255,11 +234,10 @@ void drawFireballs() {
     screenSetColor(WHITE, BLACK);
 }
 
-// Função para desenhar o mapa
 void screenDrawMap() {
     for (int y = 0; y < MAP_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {
-            char cell = map[y][x];  // Declare 'cell' aqui dentro do loop
+            char cell = map[y][x];
 
             switch(cell) {
                 case '#':
@@ -268,27 +246,25 @@ void screenDrawMap() {
                 case 'D':
                     screenSetColor(COLOR_DOOR, BLACK);
                     break;
-                case 'B':  // Desenhar bombas
+                case 'B':
                     screenSetColor(COLOR_BOMB, BLACK);
                     screenGotoxy(x, y);
-                    printf("B");  // Exibir emoji da bomba
+                    printf("B");
                     screenSetColor(WHITE, BLACK);
-                    continue;  // Evita sobrescrever abaixo
+                    continue;
                 default:
                     screenSetColor(COLOR_FLOOR, BLACK);
                     break;
             }
 
-            // Aqui, o 'cell' está corretamente definido
             screenGotoxy(x, y);
-            printf("%c", cell);  // Exibe o conteúdo da célula
+            printf("%c", cell);
         }
     }
     screenSetColor(WHITE, BLACK);
     fflush(stdout);
 }
 
-// Função para desenhar o jogador
 void PrintMago() {
     screenSetColor(COLOR_PLAYER, BLACK);
     screenGotoxy(playerX, playerY);
@@ -296,7 +272,6 @@ void PrintMago() {
     fflush(stdout);
 }
 
-// Função para desenhar os inimigos
 void drawEnemies() {
     screenSetColor(COLOR_ENEMY, BLACK);
     for (int i = 0; i < MAX_ENEMIES; i++) {
@@ -308,15 +283,13 @@ void drawEnemies() {
     fflush(stdout);
 }
 
-// Função para desenhar o boss
 void drawBoss() {
     screenSetColor(COLOR_ENEMY, BLACK);
     for (int i = 0; i < MAX_BOSS; i++) {
         if (boss[i].alive) {
             screenGotoxy(boss[i].x, boss[i].y);
-            printf("🧟");  // Boss emoji
+            printf("🧟");
             
-            // Draw boss health bar
             screenGotoxy(2, 2);
             printf("Boss HP: ");
             for (int hp = 0; hp < boss[i].health; hp++) {
@@ -327,7 +300,6 @@ void drawBoss() {
     screenSetColor(WHITE, BLACK);
 }
 
-// Função Para checar se o boss nasceu
 void checkBossSpawn() {
     if (enemies_defeated >= 10 && !boss_spawned) {
         for (int i = 0; i < MAX_BOSS; i++) {
@@ -336,44 +308,37 @@ void checkBossSpawn() {
                 boss[i].health = 10;
                 boss_spawned = 1;
                 
-                // Limpa o centro do mapa para o boss
                 int centerX = MAP_WIDTH / 2;
                 int centerY = MAP_HEIGHT / 2;
                 boss[i].x = centerX;
                 boss[i].y = centerY;
                 
-                // Mensagem dramática de spawn do boss
                 screenGotoxy(MAP_WIDTH/2 - 20, MAP_HEIGHT/2 - 5);
                 printf("⚠️ O BOSS FINAL APARECEU! PREPARE-SE PARA A BATALHA! ⚠️");
-                sleep(2); // Pausa dramática
+                sleep(2);
                 break;
             } 
-
         }
-       
     }
 }
 
-// Função para mover o jogador
 void movePlayer(int dx, int dy) {
     int newX = playerX + dx;
     int newY = playerY + dy;
 
-    if (map[newY][newX] != '#') {  // Verifica se o destino é válido
-        map[playerY][playerX] = ' ';  // Atualiza o mapa limpando a posição antiga
+    if (map[newY][newX] != '#') {
+        map[playerY][playerX] = ' ';
         playerX = newX;
         playerY = newY;
-        check_bomb_collision(playerX, playerY);  // Verifica colisão com bombas
-        check_enemy_collision(playerX, playerY); // Verifica colisão com inimigos
-        map[playerY][playerX] = '@';  // Atualiza o mapa com a nova posição
-        refreshScreen();  // Redesenha tudo
+        check_bomb_collision(playerX, playerY);
+        check_enemy_collision(playerX, playerY);
+        map[playerY][playerX] = '@';
+        refreshScreen();
 
         check_bomb_collision(playerX, playerY);
-
     }
 }
 
-// Função para verificar se uma posição está ocupada por outro inimigo
 int isOccupiedByEnemy(int x, int y) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (enemies[i].alive && enemies[i].x == x && enemies[i].y == y) {
@@ -383,7 +348,6 @@ int isOccupiedByEnemy(int x, int y) {
     return 0;
 }
 
-// Função para verificar se uma posição está ocupada pelo boss
 int isOccupiedByBoss(int x, int y) {
     for (int i = 0; i < MAX_BOSS; i++) {
         if (boss[i].alive && boss[i].x == x && boss[i].y == y) {
@@ -393,13 +357,12 @@ int isOccupiedByBoss(int x, int y) {
     return 0;
 }
 
-// Função para mover inimigos em direção ao jogador
 void moveEnemies() {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemies[i].alive) continue;
 
         screenGotoxy(enemies[i].x, enemies[i].y);
-        printf(" ");  // Limpa a posição antiga
+        printf(" ");
 
         int dx = (playerX > enemies[i].x) ? 1 : (playerX < enemies[i].x) ? -1 : 0;
         int dy = (playerY > enemies[i].y) ? 1 : (playerY < enemies[i].y) ? -1 : 0;
@@ -412,21 +375,19 @@ void moveEnemies() {
             enemies[i].y = newY;
         }
 
-        // Verifica colisão com o jogador
         if (enemies[i].x == playerX && enemies[i].y == playerY) {
             check_enemy_collision(playerX, playerY);
         }
     }
-    drawEnemies();  // Atualiza os inimigos na tela
+    drawEnemies();
 }
 
-// Função para mover o boss em direção ao jogador
 void moveBoss() {
     for (int i = 0; i < MAX_BOSS; i++) {
         if (!boss[i].alive) continue;
 
         screenGotoxy(boss[i].x, boss[i].y);
-        printf(" ");  // Limpa a posição antiga
+        printf(" ");
 
         int dx = (playerX > boss[i].x) ? 1 : (playerX < boss[i].x) ? -1 : 0;
         int dy = (playerY > boss[i].y) ? 1 : (playerY < boss[i].y) ? -1 : 0;
@@ -439,15 +400,13 @@ void moveBoss() {
             boss[i].y = newY;
         }
 
-        // Verifica colisão com o jogador
         if (boss[i].x == playerX && boss[i].y == playerY) {
             check_boss_collision(playerX, playerY);
         }
     }
-    drawBoss();  // Atualiza os inimigos na tela
+    drawBoss();
 }
 
-// Função para exibir feedback visual do ataque ao redor do jogador
 void showAttackFeedback() {
     screenSetColor(COLOR_ATTACK, BLACK);
     for (int dy = -1; dy <= 1; dy++) {
@@ -465,7 +424,6 @@ void showAttackFeedback() {
     fflush(stdout);
 }
 
-// Função para ataque com feedback visual
 void playerAttack() {
     showAttackFeedback();
 
@@ -476,8 +434,8 @@ void playerAttack() {
             screenGotoxy(enemies[i].x, enemies[i].y);
             printf(" ");
             enemies[i].alive = 0;
-            enemies_defeated++;  // Increment counter when enemy is defeated
-            checkBossSpawn();    // Check if boss should spawn
+            enemies_defeated++;
+            checkBossSpawn();
         }
     }
 
@@ -491,14 +449,12 @@ void playerAttack() {
     }
 }
 
-// Inicializa as bolas de fogo
 void initFireballs() {
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         fireballs[i].active = 0;
     }
 }
 
-// Cria uma nova bola de fogo
 void createFireball() {
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (!fireballs[i].active) {
@@ -532,7 +488,6 @@ void createFireball() {
     }
 }
 
-// Atualiza a posição das bolas de fogo e verifica colisões
 void updateFireballs(struct timespec *lastFireballMove) {
     struct timespec currentTime;
     clock_gettime(CLOCK_MONOTONIC, &currentTime);
@@ -611,7 +566,6 @@ void updateFireballs(struct timespec *lastFireballMove) {
     refreshScreen(); // Refresh the screen after updating fireballs
 }
 
-// Função para posicionar bombas aleatoriamente no mapa
 void placeBombs(int num_bombs) {
     srand(time(NULL));
     for (int i = 0; i < num_bombs; i++) {
@@ -625,7 +579,6 @@ void placeBombs(int num_bombs) {
     }
 }
 
-// Função para verificar colisão com bombas
 void check_bomb_collision(int x, int y) {
     // Verifica em todas as direções próximas ao jogador
     int bomb_coords[9][2] = {
@@ -663,7 +616,6 @@ void check_bomb_collision(int x, int y) {
     }
 }
 
-// Função para verificar colisão com inimigos
 void check_enemy_collision(int x, int y) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (enemies[i].alive && enemies[i].x == x && enemies[i].y == y) {
@@ -679,7 +631,6 @@ void check_enemy_collision(int x, int y) {
     }
 }
 
-// Função para verificar colisão com inimigos
 void check_boss_collision(int x, int y) {
     for (int i = 0; i < MAX_BOSS; i++) {
         if (boss[i].alive && boss[i].x == x && boss[i].y == y) {
@@ -688,13 +639,12 @@ void check_boss_collision(int x, int y) {
             if (player_lives <= 0) {
                 screenClear();
                 print_ascii("files/death_boss.txt");
-                exit(0);  // Termina o jogo
+                exit(0);  
             }
         }
     }
 }
 
-// Função Para desenhar a Vida atual do Jogador
 void drawPlayerLives() {
     screenSetColor(WHITE, BLACK);
     screenGotoxy(2, 1);
@@ -706,14 +656,12 @@ void drawPlayerLives() {
 
 void player_move(int new_x, int new_y) {
     check_bomb_collision(new_x, new_y);
-    check_enemy_collision(new_x, new_y); // Verifica colisão com inimigos
+    check_enemy_collision(new_x, new_y); 
     movePlayer(new_x - playerX, new_y - playerY);
 }
 
-// Função para inicializar inimigos em posições aleatórias
 void initEnemies() {
     srand(time(NULL));
-    // Initialize regular enemies
     for (int i = 0; i < MAX_ENEMIES; i++) {
         int x, y;
         do {
@@ -726,7 +674,6 @@ void initEnemies() {
         enemies[i].alive = 1;
     }
 
-    // Initialize boss (not alive initially)
     for (int i = 0; i < MAX_BOSS; i++) {
         boss[i].x = MAP_WIDTH / 2;
         boss[i].y = MAP_HEIGHT / 2;
